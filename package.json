@@ -1,5 +1,5 @@
 {
-  "name": "@vtabary/conventional-changelog-cli",
+  "name": "@vtabary/keepachangelog-cli",
   "version": "0.1.1",
   "description": "conventional-changelog-cli",
   "main": "index.js",
