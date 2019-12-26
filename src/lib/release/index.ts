@@ -1,10 +1,15 @@
 import { promises as fs } from 'fs';
 import * as path from 'path';
 
+export const WRAPPERS = {
+  readFile: fs.readFile,
+  writeFile: fs.writeFile,
+};
+
 export class Release {
   private filePath: string;
 
-  constructor(private options: {
+  constructor(options: {
     filePath?: string;
   } = {}) {
     this.filePath = options.filePath || './CHANGELOG.md';
@@ -22,11 +27,11 @@ export class Release {
   }
 
   private async read(): Promise<string> {
-    return fs.readFile(path.join(process.cwd(), this.filePath), { encoding: 'utf-8' });
+    return WRAPPERS.readFile(path.resolve(this.filePath), { encoding: 'utf-8' });
   }
 
   private async write(data: string): Promise<void> {
-    return fs.writeFile(path.join(process.cwd(), this.filePath), data, { encoding: 'utf-8' });
+    return WRAPPERS.writeFile(path.resolve(this.filePath), data, { encoding: 'utf-8' });
   }
 
   private replace(data: string, number: string): string {
