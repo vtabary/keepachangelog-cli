@@ -16,14 +16,15 @@ export class Release {
   }
 
   public async process(options: {
-    number: string;
+    number?: string;
   }): Promise<void> {
-    if (!options.number) {
+    const number = options.number || process.env.npm_package_version;
+    if (!number) {
       return Promise.reject(new Error('Version number is missing'));
     }
 
     const changelog = await this.read();
-    return this.write(this.replace(changelog, options.number));
+    return this.write(this.replace(changelog, number));
   }
 
   private async read(): Promise<string> {

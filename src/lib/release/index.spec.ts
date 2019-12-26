@@ -80,9 +80,12 @@ describe('Release', () => {
       });
     });
 
-    it('should add an entry', async () => {
-      const date = new Date().toISOString().slice(0, 10);
-      spyRead.and.callFake(() => Promise.resolve(`# Changelog
+    describe('should add an entry', () => {
+      let date: string;
+
+      beforeEach(() => {
+        date = new Date().toISOString().slice(0, 10);
+        spyRead.and.callFake(() => Promise.resolve(`# Changelog
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -94,9 +97,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0] - Date
 `));
-      release = new Release();
-      await release.process({ number: '1.0.0' })
-      expect(spyWrite.calls.first().args[1]).toEqual(`# Changelog
+        release = new Release();
+      });
+
+      it('with the given number', async () => {
+        await release.process({ number: '1.0.0' });
+        expect(spyWrite.calls.first().args[1]).toEqual(`# Changelog
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -110,6 +116,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0] - Date
 `);
+      });
+
+      it('should use the npm_package_version environment variable when no version number is provided', async () => {
+        process.env.npm_package_version = '4.2.0';
+        await release.process({});
+        expect(spyWrite.calls.first().args[1]).toEqual(`# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [4.2.0] - ${date}
+### Fixed
+- Some message
+
+## [0.1.0] - Date
+`);
+      });
     });
   });
 });
