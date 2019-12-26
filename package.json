@@ -1,0 +1,38 @@
+{
+  "name": "@vtabary/conventional-changelog-cli",
+  "version": "0.0.0",
+  "description": "conventional-changelog-cli",
+  "main": "index.js",
+  "bin": {
+    "keepachangelog": "./dist/bin/keepachangelog.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vtabary/conventional-changelog-cli.git"
+  },
+  "author": {
+    "name": "Vincent Tabary",
+    "email": "vincent.tabary@gmail.com"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vtabary/conventional-changelog-cli/issues"
+  },
+  "homepage": "https://github.com/vtabary/conventional-changelog-cli#readme",
+  "devDependencies": {
+    "@types/commander": "^2.12.2",
+    "@types/node": "^13.1.0",
+    "typescript": "^3.7.4"
+  },
+  "dependencies": {
+    "commander": "^4.0.1"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ]
+}
