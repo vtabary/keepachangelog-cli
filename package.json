@@ -6,6 +6,7 @@
   "bin": {
     "keepachangelog": "./dist/bin/keepachangelog.js"
   },
+  "private": false,
   "scripts": {
     "build": "tsc",
     "test": "ts-node node_modules/jasmine/bin/jasmine",
