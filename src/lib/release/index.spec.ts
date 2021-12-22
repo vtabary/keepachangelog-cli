@@ -12,37 +12,47 @@ describe('Release', () => {
     });
 
     it('should create an instance with the file path', () => {
-      expect(() => new Release({
-        filePath: 'test',
-      })).not.toThrow();
+      expect(
+        () =>
+          new Release({
+            filePath: 'test',
+          })
+      ).not.toThrow();
     });
   });
 
   describe('#process', () => {
     let release: Release;
-    let spyRead: jasmine.Spy;
-    let spyWrite: jasmine.Spy;
+    let spyRead: jest.SpyInstance;
+    let spyWrite: jest.SpyInstance;
 
     beforeEach(() => {
-      spyRead = spyOn(WRAPPERS, 'readFile');
-      spyRead.and.callFake(() => Promise.resolve('test'));
-      spyWrite = spyOn(WRAPPERS, 'writeFile');
-      spyWrite.and.callFake(() => Promise.resolve());
-      spyOn(process, 'cwd').and.returnValue(path.join('/', 'root'));
+      spyRead = jest.spyOn(WRAPPERS, 'readFile');
+      spyRead.mockImplementation(() => Promise.resolve('test'));
+      spyWrite = jest.spyOn(WRAPPERS, 'writeFile');
+      spyWrite.mockImplementation(() => Promise.resolve());
+      jest.spyOn(process, 'cwd').mockReturnValue(path.join('/', 'root'));
     });
 
     describe('with the default path', () => {
       beforeEach(async () => {
         release = new Release();
-        await release.process({ number: '1.0.0' });
+        await release.process({ versionNumber: '1.0.0' });
       });
 
       it('should read the default file', () => {
-        expect(spyRead).toHaveBeenCalledWith(path.resolve('/root/CHANGELOG.md'), { encoding: 'utf-8' });
+        expect(spyRead).toHaveBeenCalledWith(
+          path.resolve('/root/CHANGELOG.md'),
+          { encoding: 'utf-8' }
+        );
       });
 
       it('should write the default file', () => {
-        expect(spyWrite).toHaveBeenCalledWith(path.resolve('/root/CHANGELOG.md'), 'test', { encoding: 'utf-8' });
+        expect(spyWrite).toHaveBeenCalledWith(
+          path.resolve('/root/CHANGELOG.md'),
+          'test',
+          { encoding: 'utf-8' }
+        );
       });
     });
 
@@ -51,15 +61,22 @@ describe('Release', () => {
         release = new Release({
           filePath: './custom-path',
         });
-        await release.process({ number: '1.0.0' });
+        await release.process({ versionNumber: '1.0.0' });
       });
 
       it('should read the default file', () => {
-        expect(spyRead).toHaveBeenCalledWith(path.resolve('/root/custom-path'), { encoding: 'utf-8' });
+        expect(spyRead).toHaveBeenCalledWith(
+          path.resolve('/root/custom-path'),
+          { encoding: 'utf-8' }
+        );
       });
 
       it('should write the default file', () => {
-        expect(spyWrite).toHaveBeenCalledWith(path.join('/root/custom-path'), 'test', { encoding: 'utf-8' });
+        expect(spyWrite).toHaveBeenCalledWith(
+          path.join('/root/custom-path'),
+          'test',
+          { encoding: 'utf-8' }
+        );
       });
     });
 
@@ -68,15 +85,21 @@ describe('Release', () => {
         release = new Release({
           filePath: '/custom-path',
         });
-        await release.process({ number: '1.0.0' });
+        await release.process({ versionNumber: '1.0.0' });
       });
 
       it('should read the default file', () => {
-        expect(spyRead).toHaveBeenCalledWith(path.resolve('/custom-path'), { encoding: 'utf-8' });
+        expect(spyRead).toHaveBeenCalledWith(path.resolve('/custom-path'), {
+          encoding: 'utf-8',
+        });
       });
 
       it('should write the default file', () => {
-        expect(spyWrite).toHaveBeenCalledWith(path.join('/custom-path'), 'test', { encoding: 'utf-8' });
+        expect(spyWrite).toHaveBeenCalledWith(
+          path.join('/custom-path'),
+          'test',
+          { encoding: 'utf-8' }
+        );
       });
     });
 
@@ -85,7 +108,8 @@ describe('Release', () => {
 
       beforeEach(() => {
         date = new Date().toISOString().slice(0, 10);
-        spyRead.and.callFake(() => Promise.resolve(`# Changelog
+        spyRead.mockClear().mockImplementation(() =>
+          Promise.resolve(`# Changelog
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -96,13 +120,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Some message
 
 ## [0.1.0] - Date
-`));
+`)
+        );
         release = new Release();
       });
 
       it('with the given number', async () => {
-        await release.process({ number: '1.0.0' });
-        expect(spyWrite.calls.first().args[1]).toEqual(`# Changelog
+        await release.process({ versionNumber: '1.0.0' });
+        expect(spyWrite.mock.calls[0][1]).toEqual(`# Changelog
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -111,25 +136,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [1.0.0] - ${date}
-### Fixed
-- Some message
-
-## [0.1.0] - Date
-`);
-      });
-
-      it('should use the npm_package_version environment variable when no version number is provided', async () => {
-        process.env.npm_package_version = '4.2.0';
-        await release.process({});
-        expect(spyWrite.calls.first().args[1]).toEqual(`# Changelog
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [Unreleased]
-
-## [4.2.0] - ${date}
 ### Fixed
 - Some message
 

@@ -1,38 +1,43 @@
-import { promises as fs } from 'fs';
+import { readFile, writeFile } from 'fs/promises';
 import * as path from 'path';
 
 export const WRAPPERS = {
-  readFile: fs.readFile,
-  writeFile: fs.writeFile,
+  readFile,
+  writeFile,
 };
 
 export class Release {
   private filePath: string;
 
-  constructor(options: {
-    filePath?: string;
-  } = {}) {
+  constructor(
+    options: {
+      filePath?: string;
+    } = {}
+  ) {
     this.filePath = options.filePath || './CHANGELOG.md';
   }
 
-  public async process(options: {
-    number?: string;
-  }): Promise<void> {
-    const number = options.number || process.env.npm_package_version;
-    if (!number) {
+  public async process(options: { versionNumber: string }): Promise<void> {
+    if (!options.versionNumber) {
       return Promise.reject(new Error('Version number is missing'));
     }
 
     const changelog = await this.read();
-    return this.write(this.replace(changelog, number));
+    return this.write(this.replace(changelog, options.versionNumber));
   }
 
   private async read(): Promise<string> {
-    return WRAPPERS.readFile(path.resolve(this.filePath), { encoding: 'utf-8' });
+    return WRAPPERS.readFile(path.resolve(process.cwd(), this.filePath), {
+      encoding: 'utf-8',
+    });
   }
 
   private async write(data: string): Promise<void> {
-    return WRAPPERS.writeFile(path.resolve(this.filePath), data, { encoding: 'utf-8' });
+    return WRAPPERS.writeFile(
+      path.resolve(process.cwd(), this.filePath),
+      data,
+      { encoding: 'utf-8' }
+    );
   }
 
   private replace(data: string, number: string): string {
