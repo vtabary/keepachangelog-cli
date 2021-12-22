@@ -26,7 +26,7 @@ It can be used in the `scripts` of the package.json file, using the given enviro
     // Update the CHANGELOG.md file and add it to the staged files
     "version": "keepachangelog release $npm_package_version && git add ./CHANGELOG.md",
     // Add the updated file to the commit deicated to the version
-    "postversion": "git push origin HEAD && git push origin $npm_package_version",
+    "postversion": "git push origin HEAD && git push origin v$npm_package_version",
   }
   ...
 }

@@ -11,7 +11,7 @@
     "build": "tsc",
     "test": "jest",
     "version": "npm run build && node ./dist/bin/keepachangelog release $npm_package_version && git add ./CHANGELOG.md",
-    "postversion": "git push origin HEAD && git push origin $npm_package_version",
+    "postversion": "git push origin HEAD && git push origin v$npm_package_version",
     "prepare": "husky install"
   },
   "repository": {
