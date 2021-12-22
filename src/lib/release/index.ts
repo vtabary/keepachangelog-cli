@@ -17,7 +17,7 @@ export class Release {
     this.filePath = options.filePath || './CHANGELOG.md';
   }
 
-  public async process(options: { versionNumber: string }): Promise<void> {
+  public async process(options: { versionNumber?: string }): Promise<void> {
     if (!options.versionNumber) {
       return Promise.reject(new Error('Version number is missing'));
     }

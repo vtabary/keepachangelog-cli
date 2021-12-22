@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import commander from 'commander';
 import { Release } from '../lib/release';
 
@@ -7,14 +5,11 @@ const program = new commander.Command();
 program.version('0.0.1');
 
 program
-  .command('release <number>')
-  .description('add a new entry ')
-  .option(
-    '-f, --file <file_path>',
-    'changelog file path',
-    undefined,
-    './CHANGELOG.md'
+  .command('release [number]')
+  .description(
+    'add a new entry. When no number is provided, it will try to use the npm_package_version instead.'
   )
+  .option('-f, --file <file_path>', 'changelog file path', './CHANGELOG.md')
   .action(
     (
       number: string,
@@ -25,7 +20,7 @@ program
       return new Release({
         filePath: options.filePath,
       }).process({
-        versionNumber: number,
+        versionNumber: number || process.env.npm_package_version,
       });
     }
   );
