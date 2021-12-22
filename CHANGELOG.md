@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Add the missing header on the cli
+
 ## [0.2.0] - 2021-12-22
 
 ### Changed
