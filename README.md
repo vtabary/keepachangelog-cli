@@ -1,5 +1,10 @@
 # Keep a changelog cli
 
+![Test status](https://github.com/vtabary/keepachangelog-cli/workflows/Test/badge.svg)
+[![Npm package version](https://img.shields.io/npm/v/@vtabary/keepachangelog-cli)](https://npmjs.com/package/@vtabary/keepachangelog-cli)
+![NPM Downloads](https://img.shields.io/npm/dw/@vtabary/keepachangelog-cli)
+![NPM License](https://img.shields.io/npm/l/@vtabary/keepachangelog-cli)
+
 Made to update the `CHANGELOG.md` file when creating a new library version.
 
 The `CHANGELOG.md` file should be based on the [Keepachangelog conventions](https://keepachangelog.com).
