@@ -1,6 +1,6 @@
 {
   "name": "@vtabary/keepachangelog-cli",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "conventional-changelog-cli",
   "main": "./dist/lib/index.js",
   "engines": {
