@@ -21,6 +21,7 @@ Options:
 
 Commands:
   release [options] [number]  add a new entry. When no number is provided, it will try to use the npm_package_version instead.
+  confirm [options] [number]  ask the use a confirmation before creating the new version
   help [command]              display help for command
 ```
 
@@ -34,14 +35,18 @@ npx keepachangelog release <version> -c
 
 ### Update the CHANGELOG file on NPM version
 
-It can be used in the `scripts` of the package.json file, using the given environment variable `npm_package_version`:
+It can be used in the `scripts` of the package.json file, using the given environment variable `npm_new_version`:
 
 ```json
 {
   ...
   "scripts": {
     // Update the CHANGELOG.md file and add it to the staged files
-    "version": "keepachangelog release $npm_package_version -c && git add ./CHANGELOG.md",
+    // Use $npm_new_version and $npm_old_version with npm 7+ on Linux, or $npm_package_version with npm 6.x
+    // Use the format %npm_new_version% on Windows
+    // The `--current-version` option is optional since the cli can read the packagee.json file
+    "preversion": "keepachangelog confirm $npm_new_version --current-version $npm_old_version",
+    "version": "keepachangelog release $npm_new_version && git add ./CHANGELOG.md",
     // Optional: Add the updated file to the commit dedicated to the version, and push the modification to the origin repository
     "postversion": "git push origin HEAD && git push origin v$npm_package_version",
   }

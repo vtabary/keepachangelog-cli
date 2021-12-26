@@ -9,12 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add an option `-c`to `release` command to let the user confirm the version creation
+- Add a new `confirm` command to let the user confirm the version creation
 - Exports some functions and classes as a library
 
 ### Fixed
 
-- Version is now correct with `-V` option
+- Version is now correct when using the `-V` option
 
 ## [0.2.1] - 2021-12-22
 

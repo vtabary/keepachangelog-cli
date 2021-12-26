@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { resolve } from 'path';
 import { Command } from 'commander';
 import { VERSION } from '../data/version';
 import { confirmVersion } from '../lib/confirm/confirm';
@@ -14,29 +15,59 @@ program
   .description(
     'add a new entry. When no number is provided, it will try to use the npm_package_version instead.'
   )
-  .option('-f, --file <file_path>', 'changelog file path', './CHANGELOG.md')
   .option(
-    '-c, --confirm',
-    'add a confirmation before creating the new version',
-    false
+    '-f, --file <file_path>',
+    'changelog file path',
+    resolve('./CHANGELOG.md')
   )
   .option(
-    '--current-version',
-    'force the current package version. By default, will try to extract the version from the package.json'
+    '--cwd <directory>',
+    'set the current working directory',
+    process.cwd()
   )
-  .option('--cwd', 'set the current working directory', false)
   .action(
     async (
       number: string,
       options: {
-        confirm: boolean;
-        filePath?: string;
-        cwd?: string;
+        file: string;
+        cwd: string;
+      }
+    ) => {
+      return new Release({
+        filePath: resolve(options.cwd, options.file),
+      }).release({
+        versionNumber:
+          number ||
+          // From npm 7+
+          process.env.npm_new_version ||
+          // From npm 6+
+          process.env.npm_package_version,
+      });
+    }
+  );
+
+program
+  .command('confirm [number]')
+  .description('ask the user a confirmation before creating the new version')
+  .option(
+    '--current-version',
+    'force the current package version. By default, will try to extract the version from the package.json',
+    process.env.npm_old_version || process.env.npm_package_version
+  )
+  .option(
+    '--cwd <directory>',
+    'set the current working directory',
+    process.cwd()
+  )
+  .action(
+    async (
+      number: string,
+      options: {
         currentVersion?: string;
+        cwd: string;
       }
     ) => {
       if (
-        options.confirm &&
         !(await confirmVersion(
           number,
           await getCurrentVersion(options.currentVersion, { cwd: options.cwd })
@@ -45,11 +76,6 @@ program
         console.error('Interrupted by user');
         process.exit(1);
       }
-      return new Release({
-        filePath: options.filePath,
-      }).release({
-        versionNumber: number || process.env.npm_package_version,
-      });
     }
   );
 
