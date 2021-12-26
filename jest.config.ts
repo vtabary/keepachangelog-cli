@@ -4,5 +4,6 @@ export default {
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
   rootDir: './',
-  testPathIgnorePatterns: ['/node_modules/', '/*.js'],
+  testPathIgnorePatterns: ['/node_modules/', '/*.js', '/samples/'],
+  modulePathIgnorePatterns: ['/samples'],
 };

@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { WRAPPERS, Release } from './index';
+import { WRAPPERS, Release } from './release';
 
 describe('Release', () => {
   describe('#new', () => {
@@ -21,7 +21,7 @@ describe('Release', () => {
     });
   });
 
-  describe('#process', () => {
+  describe('#release', () => {
     let release: Release;
     let spyRead: jest.SpyInstance;
     let spyWrite: jest.SpyInstance;
@@ -34,10 +34,17 @@ describe('Release', () => {
       jest.spyOn(process, 'cwd').mockReturnValue(path.join('/', 'root'));
     });
 
+    it('should reject when the new version number is missing', () => {
+      release = new Release();
+      return expect(
+        release.release({ versionNumber: undefined })
+      ).rejects.toThrow();
+    });
+
     describe('with the default path', () => {
       beforeEach(async () => {
         release = new Release();
-        await release.process({ versionNumber: '1.0.0' });
+        await release.release({ versionNumber: '1.0.0' });
       });
 
       it('should read the default file', () => {
@@ -61,7 +68,7 @@ describe('Release', () => {
         release = new Release({
           filePath: './custom-path',
         });
-        await release.process({ versionNumber: '1.0.0' });
+        await release.release({ versionNumber: '1.0.0' });
       });
 
       it('should read the default file', () => {
@@ -85,7 +92,7 @@ describe('Release', () => {
         release = new Release({
           filePath: '/custom-path',
         });
-        await release.process({ versionNumber: '1.0.0' });
+        await release.release({ versionNumber: '1.0.0' });
       });
 
       it('should read the default file', () => {
@@ -126,7 +133,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
       });
 
       it('with the given number', async () => {
-        await release.process({ versionNumber: '1.0.0' });
+        await release.release({ versionNumber: '1.0.0' });
         expect(spyWrite.mock.calls[0][1]).toEqual(`# Changelog
 All notable changes to this project will be documented in this file.
 
