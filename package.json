@@ -17,7 +17,7 @@
     "dev": "ts-node -P tsconfig.build.json ./src/bin/keepachangelog.ts",
     "start": "node ./dist/bin/keepachangelog.js",
     "test": "jest",
-    "preversion": "npm run build && node ./dist/bin/keepachangelog confirm $npm_new_version --current-version $npm_old_version",
+    "preversion": "npm run build && node ./dist/bin/keepachangelog display unreleased && node ./dist/bin/keepachangelog confirm $npm_new_version --current-version $npm_old_version",
     "version": "npm run build && node ./dist/bin/keepachangelog release $npm_new_version && git add ./CHANGELOG.md",
     "postversion": "git push origin HEAD && git push origin v$npm_new_version",
     "prepare": "husky install"
@@ -55,6 +55,7 @@
     "typescript": "^4"
   },
   "dependencies": {
+    "chalk": "^4",
     "commander": "^8",
     "find-up": "^5.0.0",
     "inquirer": "^8.2.0"

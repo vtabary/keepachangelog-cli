@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- add a command `display` to show the messages of a version
+
+### Changed
+
+- split the `Release`class into multiple atomic functions
+
 ## [0.3.0] - 2021-12-26
 
 ### Added

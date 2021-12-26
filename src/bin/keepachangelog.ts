@@ -4,8 +4,11 @@ import { resolve } from 'path';
 import { Command } from 'commander';
 import { VERSION } from '../data/version';
 import { confirmVersion } from '../lib/confirm/confirm';
-import { Release } from '../lib/release/release';
+import { release } from '../lib/release/release';
 import { getCurrentVersion } from '../lib/package/package';
+import { readChangelog, writeChangelog } from '../lib/file/file';
+import { format } from '../lib/formatter/formatter';
+import { parseSummary } from '../lib/parser/parser';
 
 const program = new Command();
 program.version(VERSION);
@@ -33,16 +36,16 @@ program
         cwd: string;
       }
     ) => {
-      return new Release({
-        filePath: resolve(options.cwd, options.file),
-      }).release({
-        versionNumber:
-          number ||
+      const filePath = resolve(options.cwd, options.file);
+      const content = release(
+        await readChangelog(filePath),
+        number ||
           // From npm 7+
           process.env.npm_new_version ||
           // From npm 6+
-          process.env.npm_package_version,
-      });
+          process.env.npm_package_version
+      );
+      return writeChangelog(content, filePath);
     }
   );
 
@@ -76,6 +79,42 @@ program
         console.error('Interrupted by user');
         process.exit(1);
       }
+    }
+  );
+
+program
+  .command('display [number]')
+  .description(
+    'display the summary of the changelog for a specific version. Can take a semver version number or "unreleased" as an argument. Default will be unreleased'
+  )
+  .option(
+    '-f, --file <file_path>',
+    'changelog file path',
+    resolve('./CHANGELOG.md')
+  )
+  .option(
+    '--cwd <directory>',
+    'set the current working directory',
+    process.cwd()
+  )
+  .action(
+    async (
+      number: string | undefined,
+      options: {
+        file: string;
+        cwd: string;
+      }
+    ) => {
+      const filePath = resolve(options.cwd, options.file);
+      const content = format(
+        parseSummary(await readChangelog(filePath), number || 'unreleased')
+      );
+
+      if (content.length === 0) {
+        return console.warn(`No message for version "${number}"`);
+      }
+
+      console.log(content);
     }
   );
 
