@@ -45,8 +45,8 @@ It can be used in the `scripts` of the package.json file, using the given enviro
     // Update the CHANGELOG.md file and add it to the staged files
     // Use $npm_new_version and $npm_old_version with npm 7+ on Linux, or $npm_package_version with npm 6.x
     // Use the format %npm_new_version% on Windows
-    // The `--current-version` option is optional since the cli can read the packagee.json file
-    "preversion": "keepeachangelog display unreleased && keepachangelog confirm $npm_new_version --current-version $npm_old_version",
+    // The `--current-version` option is optional since the cli can read the package.json file
+    "preversion": "keepachangelog display unreleased && keepachangelog confirm $npm_new_version --current-version $npm_old_version",
     "version": "keepachangelog release $npm_new_version && git add ./CHANGELOG.md",
     // Optional: Add the updated file to the commit dedicated to the version, and push the modification to the origin repository
     "postversion": "git push origin HEAD && git push origin v$npm_new_version",
